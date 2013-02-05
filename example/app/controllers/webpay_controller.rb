@@ -42,6 +42,25 @@ class WebpayController < ApplicationController
 
   def success
 
+    # Only for debug. This block can be safely removed.
+    if params[:debug].presence and params[:debug] == 'true' and not @params.presence
+      @params = {
+        "TBK_ORDEN_COMPRA"=>"9b094a8c0ba1",
+        "TBK_TIPO_TRANSACCION"=>"TR_NORMAL",
+        "TBK_RESPUESTA"=>"0",
+        "TBK_MONTO"=>"500000",
+        "TBK_CODIGO_AUTORIZACION"=>"721410",
+        "TBK_FINAL_NUMERO_TARJETA"=>"6623",
+        "TBK_FECHA_CONTABLE"=>"0130",
+        "TBK_FECHA_TRANSACCION"=>"0130",
+        "TBK_HORA_TRANSACCION"=>"194634",
+        "TBK_ID_SESION"=>"425abc7b347c",
+        "TBK_ID_TRANSACCION"=>"6371475922",
+        "TBK_TIPO_PAGO"=>"VD",
+        "TBK_NUMERO_CUOTAS"=>"0",
+        "TBK_VCI"=>"TSY"
+      }
+    end
   end
 
   def failure

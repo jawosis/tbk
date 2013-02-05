@@ -3,6 +3,25 @@
   <p>The transaction concluded successfully.</p>
 </div>
 
-<%- if params[:debug].presence && params[:debug] == 'true' %>
+<%- if params[:debug].presence and params[:debug] == 'true' %>
 <pre>Last confirmation data: <%= last_confirmation.inspect %></pre>
+<%- end %>
+
+<%- if params[:debug].presence and params[:debug] == 'true' and @params.presence %>
+  <pre>
+TBK_ORDEN_COMPRA: <%= @params['TBK_ORDEN_COMPRA'] %>
+TBK_TIPO_TRANSACCION: <%= @params['TBK_TIPO_TRANSACCION'] %>
+TBK_RESPUESTA: <%= @params['TBK_RESPUESTA'] %>
+TBK_MONTO: <%= @params['TBK_MONTO'] %>
+TBK_CODIGO_AUTORIZACION: <%= @params['TBK_CODIGO_AUTORIZACION'] %>
+TBK_FINAL_NUMERO_TARJETA: <%= @params['TBK_FINAL_NUMERO_TARJETA'] %>
+TBK_FECHA_CONTABLE: <%= @params['TBK_FECHA_CONTABLE'] %>
+TBK_FECHA_TRANSACCION: <%= @params['TBK_FECHA_TRANSACCION'] %>
+TBK_HORA_TRANSACCION: <%= @params['TBK_HORA_TRANSACCION'] %>
+TBK_ID_SESION: <%= @params['TBK_ID_SESION'] %>
+TBK_ID_TRANSACCION: <%= @params['TBK_ID_TRANSACCION'] %>
+TBK_TIPO_PAGO: <%= @params['TBK_TIPO_PAGO'] %>
+TBK_NUMERO_CUOTAS: <%= @params['TBK_NUMERO_CUOTAS'] %>
+TBK_VCI: <%= @params['TBK_VCI'] %>
+  </pre>
 <%- end %>
