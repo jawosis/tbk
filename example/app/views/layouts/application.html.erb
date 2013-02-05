@@ -3,8 +3,27 @@
 <head>
   <title>Webpay Example</title>
   <%= csrf_meta_tags %>
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.no-icons.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+  <style>
+    .wrapper,
+    .alert-block {
+      margin: 5em auto 2em;
+      text-align: center;
+    }
+    .wrapper h4,
+    .alert-block h4 {
+      margin-bottom: .5em;
+    }
+    i {
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
-<%= yield %>
+  <div class="container">
+    <%= yield %>
+  </div>
 </body>
 </html>
