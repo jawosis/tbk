@@ -1,3 +1,4 @@
+# encoding: utf-8
 class WebpayController < ApplicationController
 
   def show
@@ -59,6 +60,24 @@ class WebpayController < ApplicationController
         "TBK_TIPO_PAGO"=>"VD",
         "TBK_NUMERO_CUOTAS"=>"0",
         "TBK_VCI"=>"TSY"
+      }
+    end
+
+    # Example data, replace by yours!
+    # Example data has value_class set to 'text-error', don't forget remove it.
+    if params[:debug].presence and params[:debug] == 'true'
+      @venta = {
+        nombre_del_comprador: { icon: 'icon-user', label: 'Nombre del comprador', value: 'Andrea Benítez Moreno', value_class: 'text-error' },
+        rut_del_comprador: { label: '<abbr title="Rol Único Tributario">RUT</abbr> del compardor', value: '12345678-5', value_class: 'text-error' },
+        nombre_del_comercio: { label: 'Nombre del comercio', value: 'Importadora Las Mosquitas S.A.', value_class: 'text-error' },
+        url_del_comercio: { label: '<abbr title="Uniform Resource Locator" lang="en">URL</abbr> del comercio', value: root_url },
+        direccion_del_comercio: { label: 'Dirección', value: '<address><strong>Importadora Las Mosquitas S.A.</strong><br>Avenida Argentina 2345, San Miguel<br>Santiago, Chile<br><abbr title="Teléfono"><i class="icon-phone"></i></abbr> +56 2 2345 6789</address>', value_class: 'text-error' },
+        condiciones: { value: 'Lorem ipsum dolor sic amet...', value_class: 'text-error' }
+      }
+
+      @orden_de_compra = { items: [ { quantity: '2', description: 'Mouse óptico', unit_price: '$ 2.000,00', price: '$ 4.000,00' },
+                                    { quantity: '1', description: 'Costo de envío', unit_price: '$ 1.000,00', price: '$ 1.000,00' } ],
+                           metadata: { total_price: '$ 5.000,00'}
       }
     end
   end

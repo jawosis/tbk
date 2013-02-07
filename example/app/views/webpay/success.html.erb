@@ -1,13 +1,15 @@
 <div class="alert alert-block alert-success">
-  <h4><i class="icon-ok"></i> Success!</h4>
-  <p>The transaction concluded successfully.</p>
+  <h4><i class="icon-ok"></i> Éxito!</h4>
+  <p>La transacción de realizó con éxito.</p>
 </div>
 
-<%- if params[:debug].presence and params[:debug] == 'true' %>
+<%- if params[:debug].presence and params[:debug] == 'true' and
+       params[:verbose].presence and params[:verbose] == 'true' %>
 <pre>Last confirmation data: <%= last_confirmation.inspect %></pre>
 <%- end %>
 
-<%- if params[:debug].presence and params[:debug] == 'true' and @params.presence %>
+<%- if params[:debug].presence and params[:debug] == 'true' and
+       params[:verbose].presence and params[:verbose] == 'true' %>
   <pre>
 TBK_ORDEN_COMPRA: <%= @params['TBK_ORDEN_COMPRA'] %>
 TBK_TIPO_TRANSACCION: <%= @params['TBK_TIPO_TRANSACCION'] %>
@@ -24,4 +26,96 @@ TBK_TIPO_PAGO: <%= @params['TBK_TIPO_PAGO'] %>
 TBK_NUMERO_CUOTAS: <%= @params['TBK_NUMERO_CUOTAS'] %>
 TBK_VCI: <%= @params['TBK_VCI'] %>
   </pre>
+<%- end %>
+
+<div class="row">
+  <%- if @params.presence %>
+  <div class="span6">
+    <h4>Detalles de la transacción</h4>
+
+    <%- @transaction = {
+      nombre_del_comprador: 'true',
+      orden_de_compra: { label: 'Orden de compra', value: @params['TBK_ORDEN_COMPRA'] },
+      tipo_de_transaccion: { label: 'Tipo de transacción', value: tipo_de_transaccion(@params['TBK_TIPO_TRANSACCION']), value_class: 'muted' },
+      respuesta: { label: 'Respuesta de Transbank', value: respuesta(@params['TBK_RESPUESTA']), value_class: 'lala' },
+      monto: { label: 'Monto', value: monto(@params['TBK_MONTO']) },
+      codigo_de_autorizacion: { label: 'Código de autorización', value: @params['TBK_CODIGO_AUTORIZACION'] },
+      final_del_numero_de_tarjeta: { icon: 'icon-credit-card', label: 'Número de la tarjeta', value: final_del_numero_de_trajeta(@params['TBK_FINAL_NUMERO_TARJETA']) },
+      fecha_contable: { icon: 'icon-calendar', label: 'Fecha contable', value: fecha_contable(@params['TBK_FECHA_CONTABLE']), value_class: 'muted' },
+      fecha_y_hora_de_transaccion: { icon: 'icon-calendar', label: 'Fecha y hora de transacción', value: fecha_y_hora_de_transaccion(@params['TBK_FECHA_TRANSACCION'], @params['TBK_HORA_TRANSACCION']) },
+      fecha_de_transaccion: { icon: 'icon-calendar', label: 'Fecha', value: fecha_de_transaccion(@params['TBK_FECHA_TRANSACCION']) },
+      hora_de_transaccion: { label: 'Hora', value: hora_de_transaccion(@params['TBK_HORA_TRANSACCION'])},
+      identificador_de_sesion: { label: 'Identificador de sesión', value: @params['TBK_ID_SESION'], value_class: 'muted' },
+      identificador_de_transaccion: { label: 'Identificador de transacción', value: @params['TBK_ID_TRANSACCION'] },
+      tipo_de_pago: { label: 'Tipo de pago', value: tipo_de_pago(@params['TBK_TIPO_PAGO']) },
+      cantidad_de_cuotas: { label: 'Cantidad de cuotas', value: cantidad_de_cuotas(@params['TBK_NUMERO_CUOTAS'] )},
+      resultado_de_transaccion: { label: 'Resultado de la transacción', value: @params['TBK_VCI'] }
+    } %>
+
+    <%= display_table_for @transaction do |p, t| %>
+      <%- t.row :final_del_numero_de_tarjeta %>
+      <%- t.row :tipo_de_pago %>
+      <%- t.row :cantidad_de_cuotas %>
+      <%- t.row :monto %>
+      <%- t.row :respuesta %>
+      <%- t.row :identificador_de_transaccion %>
+      <%- t.row :fecha_y_hora_de_transaccion %>
+      <%- t.row :orden_de_compra %>
+      <%- t.row :fecha_contable %>
+      <%- t.row :tipo_de_transaccion %>
+      <%- t.row :identificador_de_sesion %>
+    <% end %>
+  </div><!-- span6 -->
+  <%- end %>
+
+  <%- if @venta.presence %>
+  <div class="span6">
+    <h4>Detalles de la venta</h4>
+
+    <%= display_table_for @venta do |p, t| %>
+      <%- t.row :nombre_del_comprador %>
+      <%- t.row :rut_del_comprador %>
+      <%- t.row :nombre_del_comercio %>
+      <%- t.row :url_del_comercio %>
+      <%- t.row :direccion_del_comercio %>
+    <% end %>
+
+    <div class="well  well-large">
+      <h4>Modalidades de entrega, devolución o reembolso</h4>
+      <p class="<%= @venta[:condiciones][:value_class] %>"><%= @venta[:condiciones][:value] %></p>
+    </div>
+  </div><!-- span6 -->
+  <%- end %>
+</div><!-- row -->
+
+<%- if @orden_de_compra.presence %>
+<div class="row">
+  <div class="span12">
+    <h4>Orden de compra</h4>
+    <table class="table table-striped">
+      <thead>
+        <th>Cantidad</th>
+        <th class="span6">Descripción</th>
+        <th>Precio unitario</th>
+        <th>Total</th>
+      </thead>
+      <tbody>
+        <%- @orden_de_compra[:items].each do |item| %>
+        <tr>
+          <td><%= item[:quantity] %></td>
+          <td><%= item[:description] %></td>
+          <td><%= item[:unit_price] %></td>
+          <td><%= item[:price] %></td>
+        </tr>
+        <%- end %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td><strong>Total</strong></td>
+          <td><%= @orden_de_compra[:metadata][:total_price] %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 <%- end %>

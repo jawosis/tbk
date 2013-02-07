@@ -2,6 +2,95 @@
 module WebpayHelper
 
   # #########################################################################
+  # These helper class and method allow to build informative tables from
+  # a simple-form-like interface using WebpayHelper.dispaly_table_for() in views.
+  # #########################################################################
+
+  # Private: Table rows builder
+  #
+  # This class is required to reproduce the Simple Form interface.
+  # It allows to instanciate an object whose method `.row()` builds
+  # a table row for a given attribute.
+  #
+  # See display_table_for()
+  class DisplayTable
+    include WebpayHelper
+    attr_accessor :html, :params
+
+    def initialize
+      @html = ""
+      @params = nil
+    end
+
+    def row method_symbol
+
+      icon = params[method_symbol][:icon]
+      label = params[method_symbol][:label]
+      value = params[method_symbol][:value]
+      value_class = params[method_symbol][:value_class]
+
+      # Build the row
+      row = "<tr><td>"
+      if icon.presence
+        row += "<i class='#{icon}'></i> "
+      end
+      row += label
+      row += "</td><td class='#{value_class}'>#{value}</td></tr>"
+      # Add it to the <table>
+      self.html += row
+    end
+  end
+
+  # Public: Table builder to display attributes required in [1].
+  #
+  #  [1]: Manual de integración KCC 6.0, anexo C
+  #
+  # Example:
+  #
+  #   <%- # given @params is the list of Transbank parameters %>
+  #
+  #   <%- # build @transaction in the view to use the view helpers from WebpayHelpers %>
+  #   <%- @transaction = {
+  #         numero_de_tarjeta: { icon: 'icon-credit-card', label: 'Número de tarjeta',
+  #           value: final_del_numero_de_trajeta(@params[TBK_FINAL_NUMERO_TARJETA])
+  #         },
+  #         tipo_de_pago: { label: 'Tipo de pago',
+  #           value: tipo_de_pago(@params[TBK_TIPO_PAGO], value_class: 'text-success')
+  #         }
+  #       } %>
+  #
+  #   <%- # then build the table %>
+  #   <%= display_table_for @params do |t| %>
+  #     <%= t.row :final_del_numero_de_trajeta %>
+  #     <%= t.row :tipo_de_pago %>
+  #     <!-- see the WebpayHelper module for available attribute helpers -->
+  #   <% end %>
+  #
+  # Returns a compelete HTML <table> as a String.
+  def display_table_for params
+    table = DisplayTable.new
+    table.params = params
+
+    @params_are_well_formed = true
+
+    # Build the HTML <table>
+    table.html += '
+    <table class="table table-striped">
+      <thead>
+        <th class="span4"></th>
+        <th></th>
+      </thead>
+      <tbody>'
+    yield params, table
+    table.html += '
+      </tbody>
+    </table>'
+    # Return the <table>. No foreign attributes were included without filtering.
+    table.html.html_safe
+  end
+
+
+  # #########################################################################
   # Human readable transaction attributes helpers
   # #########################################################################
   #
