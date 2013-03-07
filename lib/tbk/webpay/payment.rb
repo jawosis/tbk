@@ -47,6 +47,14 @@ module TBK
         form
       end
 
+      # Get pseudo mac
+      def pseudo_mac
+        # An old pseudo mac generation carried from an old implementation
+        digest = OpenSSL::Digest::MD5.new
+        digest << self.raw_params('&',false) << self.commerce.id.to_s << "webpay"
+        mac = digest.to_s
+      end
+
       protected
         def process_url
           if self.commerce.test?
